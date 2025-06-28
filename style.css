@@ -1,5 +1,4 @@
 :root {
-<<<<<<< HEAD
   --bg-color: #0d0d0d;
   --text-color: #00ff99;
   --terminal-bg: #1a1a1a;
@@ -114,14 +113,6 @@ canvas#particles {
   border-bottom: 1px dashed #444;
   padding-bottom: 0.3rem;
 }
-=======
-    --bg-color: #0d0d0d;
-    --text-color: #00ff99;
-    --terminal-bg: #1a1a1a;
-    --card-bg: #121212;
-    --accent: #00ffaa;
-  }
-  
   body {
     margin: 0;
     background-color: var(--bg-color);
@@ -229,5 +220,3 @@ canvas#particles {
     border-bottom: 1px dashed #444;
     padding-bottom: 0.3rem;
   }
-  
->>>>>>> 16a1de22e9acc8cd7bcbeed6e272a97408fc2df4
