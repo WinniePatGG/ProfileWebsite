@@ -32,6 +32,13 @@ function drawMatrix() {
 
 setInterval(drawMatrix, 50);
 
+function formatTime(date) {
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const seconds = date.getSeconds().toString().padStart(2, '0');
+  return `${hours}:${minutes}:${seconds}`;
+}
+
 async function fetchGitHubRepos() {
   try {
     const response = await fetch('https://api.github.com/users/WinniePatGG/repos?sort=updated&direction=desc');
@@ -48,7 +55,14 @@ function displayRepos(repos) {
   grid.innerHTML = '';
   
   repos.forEach(repo => {
-    const updated = new Date(repo.updated_at).toLocaleDateString();
+    const updatedDate = new Date(repo.updated_at);
+    const formattedDate = updatedDate.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+    const formattedTime = formatTime(updatedDate);
+    
     const card = document.createElement('a');
     card.className = 'project-card';
     card.href = repo.html_url;
@@ -57,20 +71,12 @@ function displayRepos(repos) {
       <h3>${repo.name}</h3>
       <p>${repo.description || 'No description in GitHub repo'}</p>
       <div class="repo-meta">
-        <span class="updated">Updated: ${updated}</span>
+        <span class="updated">Updated: ${formattedDate} at ${formattedTime}</span>
       </div>
     `;
     grid.appendChild(card);
   });
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-  fetchGitHubRepos();
-  window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  });
-});
 
 function calculateAge(birthday) {
   const birthDate = new Date(birthday);
@@ -89,8 +95,24 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('age-display').textContent = `Hi I am WinniePatGG and I am ${age} years old.`;
   
   fetchGitHubRepos();
+  fetchGitHubActivity();
   window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
   });
 });
+
+async function fetchGitHubActivity() {
+  try {
+    const username = 'WinniePatGG';
+    const activityChart = document.getElementById('github-activity');
+    const img = document.createElement('img');
+    img.src = `https://ghchart.rshah.org/${username}`;
+    img.alt = 'GitHub Activity Chart';
+    img.style.width = '100%';
+    activityChart.appendChild(img);
+  } catch (error) {
+    console.error('Error loading GitHub activity chart:', error);
+    document.getElementById('github-activity').innerHTML = '<p>Failed to load activity chart. Please try again later.</p>';
+  }
+}
