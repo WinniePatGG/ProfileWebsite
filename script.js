@@ -1,39 +1,96 @@
-let darkMode = true;
-function toggleMode() {
-  darkMode = !darkMode;
-  document.documentElement.style.setProperty('--bg-color', darkMode ? '#0d0d0d' : '#f5f5f5');
-  document.documentElement.style.setProperty('--text-color', darkMode ? '#00ff99' : '#222');
-  document.documentElement.style.setProperty('--terminal-bg', darkMode ? '#1a1a1a' : '#fff');
-  document.documentElement.style.setProperty('--card-bg', darkMode ? '#121212' : '#e0e0e0');
-  document.documentElement.style.setProperty('--accent', darkMode ? '#00ffaa' : '#007acc');
-}
-
-const canvas = document.getElementById('particles');
+const canvas = document.getElementById('matrix');
 const ctx = canvas.getContext('2d');
+
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const particles = Array.from({length: 100}, () => ({
-  x: Math.random() * canvas.width,
-  y: Math.random() * canvas.height,
-  vx: (Math.random() - 0.5) * 1,
-  vy: (Math.random() - 0.5) * 1,
-  r: Math.random() * 2 + 1
-}));
+const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
+const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const nums = '0123456789';
+const characters = katakana + latin + nums;
+const fontSize = 14;
+const columns = canvas.width / fontSize;
+const drops = Array(Math.floor(columns)).fill(1);
 
-function animateParticles() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  particles.forEach(p => {
-    p.x += p.vx;
-    p.y += p.vy;
-    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fillStyle = '#00ffaa';
-    ctx.fill();
-  });
-  requestAnimationFrame(animateParticles);
+function drawMatrix() {
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  ctx.fillStyle = '#00aeff';
+  ctx.font = fontSize + 'px monospace';
+  
+  for (let i = 0; i < drops.length; i++) {
+    const text = characters.charAt(Math.floor(Math.random() * characters.length));
+    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+    
+    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+      drops[i] = 0;
+    }
+    drops[i]++;
+  }
 }
-animateParticles();
+
+setInterval(drawMatrix, 50);
+
+async function fetchGitHubRepos() {
+  try {
+    const response = await fetch('https://api.github.com/users/WinniePatGG/repos?sort=updated&direction=desc');
+    const repos = await response.json();
+    displayRepos(repos.filter(repo => !repo.fork));
+  } catch (error) {
+    console.error('Error fetching GitHub repos:', error);
+    document.getElementById('projects-grid').innerHTML = '<p>Failed to load projects. Please try again later.</p>';
+  }
+}
+
+function displayRepos(repos) {
+  const grid = document.getElementById('projects-grid');
+  grid.innerHTML = '';
+  
+  repos.forEach(repo => {
+    const updated = new Date(repo.updated_at).toLocaleDateString();
+    const card = document.createElement('a');
+    card.className = 'project-card';
+    card.href = repo.html_url;
+    card.target = '_blank';
+    card.innerHTML = `
+      <h3>${repo.name}</h3>
+      <p>${repo.description || 'No description in GitHub repo'}</p>
+      <div class="repo-meta">
+        <span class="updated">Updated: ${updated}</span>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  fetchGitHubRepos();
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+});
+
+function calculateAge(birthday) {
+  const birthDate = new Date(birthday);
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const age = calculateAge('2008-11-22');
+  document.getElementById('age-display').textContent = `Hi I am WinniePatGG and I am ${age} years old.`;
+  
+  fetchGitHubRepos();
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+});
