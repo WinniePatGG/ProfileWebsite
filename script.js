@@ -4,10 +4,10 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
 const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const nums = '0123456789';
-const characters = katakana + latin + nums;
+
+const characters = latin + nums;
 const fontSize = 14;
 const columns = canvas.width / fontSize;
 const drops = Array(Math.floor(columns)).fill(1);
@@ -30,7 +30,7 @@ function drawMatrix() {
   }
 }
 
-//setInterval(drawMatrix, 50);
+setInterval(drawMatrix, 50);
 
 function formatTime(date) {
   const hours = date.getHours().toString().padStart(2, '0');
