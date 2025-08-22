@@ -3,7 +3,7 @@ Built with **HTML**, **CSS**, and **JavaScript** to showcase my work, skills, an
 
 ## 📁 Live Preview
 
-Check it out here: [https://winniepat.de]
+Check it out here: https://winniepat.de
 
 ## 🛠️ Tech Stack
 
